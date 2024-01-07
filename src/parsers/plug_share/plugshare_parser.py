@@ -15,12 +15,13 @@ headers = {
 BASE_URL = "https://api.plugshare.com/v3"
 
 
-def make_request(url: str, params: dict) -> List[Optional[dict]] | None:
-    response = httpx.get(url, params=params, headers=headers)
-    if response.is_error:
-        logger.debug(f"response status code {response.status_code}; response text {response.text}")
-        return
-    return response.json()
+def _make_request(url: str, **kwargs) -> httpx.Response:
+    try:
+        response = httpx.get(url, **kwargs)
+        response.raise_for_status()
+        return response
+    except httpx.HTTPError as exc:
+        logger.debug(f'Error while requesting {exc.request.url!r}: {exc}')
 
 
 def get_locations_by_name(name: str) -> List[Optional[dict]] | None:
@@ -30,7 +31,7 @@ def get_locations_by_name(name: str) -> List[Optional[dict]] | None:
     suffix_url = "locations/search"
     params = {"query": name}
 
-    return make_request(f"{BASE_URL}/{suffix_url}", params)
+    return _make_request(f"{BASE_URL}/{suffix_url}", params=params, headers=headers).json()
 
 
 def rec_get_locations_by_region(
@@ -95,13 +96,13 @@ def get_locations_by_region(
         "longitude": longitude,
         "count": 1000,
     }
-    return make_request(f"{BASE_URL}/{suffix_url}", params)
+    return _make_request(f"{BASE_URL}/{suffix_url}", params=params, headers=headers).json()
 
 
 def get_location_by_id(location_id: int) -> List[Optional[dict]] | None:
     suffix_url = f"locations/{location_id}"
     params = {}
-    return make_request(f"{BASE_URL}/{suffix_url}", params)
+    return _make_request(f"{BASE_URL}/{suffix_url}", params=params, headers=headers).json()
 
 
 def save_json_file(filename: str, json_data: dict | List[dict]) -> None:
