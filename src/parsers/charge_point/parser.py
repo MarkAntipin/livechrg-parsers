@@ -8,17 +8,17 @@ COMMENTS_LINK_BASE = 'https://account.chargepoint.com/account/v1/driver/tip/'
 
 params_for_station_list_request = {
     'station_list': {
-        'screen_width': 500,
-        'screen_height': 500,
-        'ne_lat': 40.67507893677891,
-        'ne_lon': -73.79444830550007,
-        'sw_lat': 40.535368078419275,
-        'sw_lon': 74.08901922835163,
-        'page_size': 10,  # почему-то иногда результат оказывается в 2 раза больше заданного
+        # 'screen_width': 857.5999755859375,
+        # 'screen_height': 536,
+        'ne_lat': 90.0,
+        'ne_lon': 0.0,
+        'sw_lat': 89.0,
+        'sw_lon': 1.0,
+        'page_size': 10,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
         'page_offset': '',
         'sort_by': 'distance',
-        'reference_lat': 40.60526001337381,
-        'reference_lon': 73.94173376692585,
+        # 'reference_lat': 30,
+        # 'reference_lon': 80,
         'include_map_bound': True,
         'filter': {
             'price_free': False,
@@ -52,8 +52,11 @@ def get_stations_list() -> list | None:
     response = _make_request(url=url)
     if response:
         try:
-            res = response.json()['station_list']['stations']
-            return res
+            res = response.json()['station_list']
+            if res.get('stations', None):
+                return res['stations']
+            print(f'There are not any stations in this area: {url}')
+            return
         except (KeyError, json.decoder.JSONDecodeError):
             print(f'Stations_list has not been received from {url}')
             return
