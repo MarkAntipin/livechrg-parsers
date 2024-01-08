@@ -10,11 +10,11 @@ params_for_station_list_request = {
     'station_list': {
         # 'screen_width': 857.5999755859375,
         # 'screen_height': 536,
-        'ne_lat': 90.0,
-        'ne_lon': 0.0,
-        'sw_lat': 89.0,
-        'sw_lon': 1.0,
-        'page_size': 10,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
+        'ne_lat': 45.0,
+        'ne_lon': 20.0,
+        'sw_lat': 44.0,
+        'sw_lon': 21.0,
+        'page_size': 50,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
         'page_offset': '',
         'sort_by': 'distance',
         # 'reference_lat': 30,
@@ -38,9 +38,9 @@ params_for_station_list_request = {
 }
 
 
-def _make_request(url: str, params: dict | str | None = None) -> httpx.Response | None:
+def _make_request(url: str, **kwargs) -> httpx.Response | None:
     try:
-        response = httpx.get(url, params=params)
+        response = httpx.get(url, **kwargs)
         response.raise_for_status()
         return response
     except httpx.HTTPError as exc:
@@ -106,6 +106,13 @@ def main():
 
         with open('stations_info.json', 'w', encoding='utf-8') as file:
             json.dump(stations_info, file)
+
+
+# stations_list = get_stations_list()
+# stations_nums = []
+# for station in stations_list:
+#     stations_nums.append(station['device_id'])
+# pprint(stations_nums)
 
 
 if __name__ == '__main__':
