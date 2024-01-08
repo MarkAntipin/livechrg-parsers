@@ -63,7 +63,7 @@ def get_stations_list() -> list | None:
     print(f'Stations_list has not been received from {url} because of error while requesting')
 
 
-def get_station_info(station_id: int) -> dict | None:
+def get_station_details(station_id: int) -> dict | None:
     response = _make_request(url=STATION_INFO_LINK_BASE, params={'deviceId': station_id})
     if response:
         try:
@@ -96,7 +96,7 @@ def main():
     if stations_list:
         for station in stations_list:
             station_id = station['device_id']
-            station_info = get_station_info(station_id)
+            station_info = get_station_details(station_id)
             station_comments = get_station_comments(station_id)
             stations_info[station_id] = {
                 'brief_info': station,
@@ -106,13 +106,6 @@ def main():
 
         with open('stations_info.json', 'w', encoding='utf-8') as file:
             json.dump(stations_info, file)
-
-
-# stations_list = get_stations_list()
-# stations_nums = []
-# for station in stations_list:
-#     stations_nums.append(station['device_id'])
-# pprint(stations_nums)
 
 
 if __name__ == '__main__':
