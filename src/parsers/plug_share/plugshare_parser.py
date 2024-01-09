@@ -1,8 +1,9 @@
 import json
 from typing import List, Optional
-import httpx
 
 from utils.logger import create_logger
+from utils.make_request import make_request
+from utils.base_urls import BaseUrl
 
 logger = create_logger()
 
@@ -12,16 +13,7 @@ headers = {
                   "Chrome/120.0.0.0 Safari/537.36",
 }
 
-BASE_URL = "https://api.plugshare.com/v3"
-
-
-def _make_request(url: str, **kwargs) -> httpx.Response:
-    try:
-        response = httpx.get(url, **kwargs)
-        response.raise_for_status()
-        return response
-    except httpx.HTTPError as exc:
-        logger.debug(f'Error while requesting {exc.request.url!r}: {exc}')
+base_url = BaseUrl.PLUGSHARE.value
 
 
 def get_locations_by_name(name: str) -> List[Optional[dict]] | None:
@@ -31,7 +23,7 @@ def get_locations_by_name(name: str) -> List[Optional[dict]] | None:
     suffix_url = "locations/search"
     params = {"query": name}
 
-    return _make_request(f"{BASE_URL}/{suffix_url}", params=params, headers=headers).json()
+    return make_request(f"{base_url}/{suffix_url}", params=params, headers=headers).json()
 
 
 def rec_get_locations_by_region(
@@ -96,13 +88,13 @@ def get_locations_by_region(
         "longitude": longitude,
         "count": 1000,
     }
-    return _make_request(f"{BASE_URL}/{suffix_url}", params=params, headers=headers).json()
+    return make_request(f"{base_url}/{suffix_url}", params=params, headers=headers).json()
 
 
 def get_location_by_id(location_id: int) -> List[Optional[dict]] | None:
     suffix_url = f"locations/{location_id}"
     params = {}
-    return _make_request(f"{BASE_URL}/{suffix_url}", params=params, headers=headers).json()
+    return make_request(f"{base_url}/{suffix_url}", params=params, headers=headers).json()
 
 
 def save_json_file(filename: str, json_data: dict | List[dict]) -> None:
