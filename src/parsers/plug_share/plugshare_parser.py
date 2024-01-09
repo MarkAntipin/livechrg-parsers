@@ -46,10 +46,10 @@ def rec_get_locations_by_region(
         bottom_right_center = (latitude - span_lat / 4, longitude + span_lat / 4,)
 
         all_locations = [
-            *get_locations_by_region(*new_span_tuple, *upper_left_center),
-            *get_locations_by_region(*new_span_tuple, *upper_right_center),
-            *get_locations_by_region(*new_span_tuple, *bottom_left_center),
-            *get_locations_by_region(*new_span_tuple, *bottom_right_center),
+            *rec_get_locations_by_region(*new_span_tuple, *upper_left_center),
+            *rec_get_locations_by_region(*new_span_tuple, *upper_right_center),
+            *rec_get_locations_by_region(*new_span_tuple, *bottom_left_center),
+            *rec_get_locations_by_region(*new_span_tuple, *bottom_right_center),
         ]
 
         # locations are filtered to avoid duplication (not necessarily present)
