@@ -47,8 +47,10 @@ def _make_request(url: str, **kwargs) -> httpx.Response | None:
         print(f'Error while requesting {exc.request.url!r}: {exc}')
 
 
-def get_stations_list() -> list | None:
-    url = f'{STATION_LIST_LINK_BASE}?{json.dumps(params_for_station_list_request)}'
+def get_stations_list(params=None) -> list | None:
+    if params is None:
+        params = params_for_station_list_request
+    url = f'{STATION_LIST_LINK_BASE}?{json.dumps(params)}'
     response = _make_request(url=url)
     if response:
         try:
