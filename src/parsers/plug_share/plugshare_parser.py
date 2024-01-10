@@ -4,8 +4,13 @@ from typing import List, Optional
 from utils.logger import create_logger
 from utils.make_request import make_request
 from utils.base_urls import BaseUrl
+from setting import Settings
+import logging
 
-logger = create_logger()
+
+logger = logging.getLogger(__name__)
+
+# logger = create_logger()
 
 headers = {
     "Authorization": "Basic d2ViX3YyOkVOanNuUE54NHhXeHVkODU=",
@@ -13,6 +18,9 @@ headers = {
                   "Chrome/120.0.0.0 Safari/537.36",
 }
 
+setting = Settings()
+
+# DOTO: move on setting
 base_url = BaseUrl.PLUGSHARE.value
 
 
@@ -22,8 +30,10 @@ def get_locations_by_name(name: str) -> List[Optional[dict]] | None:
     """
     suffix_url = "locations/search"
     params = {"query": name}
-
-    return make_request(f"{base_url}/{suffix_url}", params=params, headers=headers).json()
+    r = make_request(f"{base_url}/{suffix_url}", params=params, headers=headers)
+    if r is None:
+        return
+    return r.json()
 
 
 def rec_get_locations_by_region(
@@ -34,6 +44,7 @@ def rec_get_locations_by_region(
 ) -> List[Optional[dict]] | None:
     result = get_locations_by_region(span_lat, span_lng, latitude, longitude)
 
+    print(len(result))
     if len(result) < 250:
         return result
 
@@ -88,13 +99,15 @@ def get_locations_by_region(
         "longitude": longitude,
         "count": 1000,
     }
-    return make_request(f"{base_url}/{suffix_url}", params=params, headers=headers).json()
+    # TODO handle None
+    return make_request(url=f"{base_url}/{suffix_url}", params=params, headers=headers).json()
 
 
 def get_location_by_id(location_id: int) -> List[Optional[dict]] | None:
     suffix_url = f"locations/{location_id}"
-    params = {}
-    return make_request(f"{base_url}/{suffix_url}", params=params, headers=headers).json()
+    # params = {}
+    # TODO handle None
+    return make_request(url=f"{base_url}/{suffix_url}", headers=headers).json()
 
 
 def save_json_file(filename: str, json_data: dict | List[dict]) -> None:
@@ -103,9 +116,6 @@ def save_json_file(filename: str, json_data: dict | List[dict]) -> None:
 
 
 if __name__ == "__main__":
-    locations = get_locations_by_region(2, 2, 37.5, -119.5)
-    save_json_file("some.json", locations)
-    print(len(locations))
     locations = rec_get_locations_by_region(2, 2, 37.5, -119.5)
     save_json_file("other.json", locations)
     print(len(locations))

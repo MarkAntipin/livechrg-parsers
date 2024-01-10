@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.11"
 httpx = "^0.26.0"
 apscheduler = "^3.10.4"
+pydantic = "^2.5.3"
+pydantic-settings = "^2.1.0"
 
 
 [build-system]
