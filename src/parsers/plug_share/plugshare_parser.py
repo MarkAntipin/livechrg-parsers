@@ -1,16 +1,16 @@
 import json
 from typing import List, Optional
 
+from settings import Settings
+from utils.area import PlugShareArea
 from utils.logger import create_logger
 from utils.make_request import make_request
-from utils.base_urls import BaseUrl
-from setting import Settings
-import logging
+from utils.parse_area import parse_area
 
+# import logging
 
-logger = logging.getLogger(__name__)
-
-# logger = create_logger()
+# logger = logging.getLogger(__name__)
+logger = create_logger()
 
 headers = {
     "Authorization": "Basic d2ViX3YyOkVOanNuUE54NHhXeHVkODU=",
@@ -18,104 +18,49 @@ headers = {
                   "Chrome/120.0.0.0 Safari/537.36",
 }
 
-setting = Settings()
-
-# DOTO: move on setting
-base_url = BaseUrl.PLUGSHARE.value
+settings = Settings()
 
 
-def get_locations_by_name(name: str) -> List[Optional[dict]] | None:
-    """
-    :param name: The search query. Matches on name or address.
-    """
-    suffix_url = "locations/search"
-    params = {"query": name}
-    r = make_request(f"{base_url}/{suffix_url}", params=params, headers=headers)
-    if r is None:
-        return
-    return r.json()
-
-
-def rec_get_locations_by_region(
-        span_lat: float,
-        span_lng: float,
-        latitude: float,
-        longitude: float,
-) -> List[Optional[dict]] | None:
-    result = get_locations_by_region(span_lat, span_lng, latitude, longitude)
-
-    print(len(result))
-    if len(result) < 250:
-        return result
-
-    else:
-        new_span_tuple = (span_lat / 2, span_lng / 2,)
-
-        upper_left_center = (latitude + span_lat / 4, longitude - span_lat / 4,)
-        upper_right_center = (latitude + span_lat / 4, longitude + span_lat / 4,)
-        bottom_left_center = (latitude - span_lat / 4, longitude - span_lat / 4,)
-        bottom_right_center = (latitude - span_lat / 4, longitude + span_lat / 4,)
-
-        all_locations = [
-            *rec_get_locations_by_region(*new_span_tuple, *upper_left_center),
-            *rec_get_locations_by_region(*new_span_tuple, *upper_right_center),
-            *rec_get_locations_by_region(*new_span_tuple, *bottom_left_center),
-            *rec_get_locations_by_region(*new_span_tuple, *bottom_right_center),
-        ]
-
-        # locations are filtered to avoid duplication (not necessarily present)
-        unique_locations = []
-        unique_ids = set()
-
-        for location in all_locations:
-            loc_id = location["id"]
-            if loc_id in unique_ids:
-                pass
-            else:
-                unique_ids.add(loc_id)
-                unique_locations.append(location)
-
-        return unique_locations
-
-
-def get_locations_by_region(
-        span_lat: float,
-        span_lng: float,
-        latitude: float,
-        longitude: float,
-) -> List[Optional[dict]] | None:
-    """
-    :param span_lat: Latitude span in degrees of target search region.
-    :param span_lng: Longitude span in degrees of target search region.
-    :param latitude: Latitude coordinate of target search location.
-    :param longitude: Longitude coordinate of target search location.
-    """
-
-    suffix_url = "locations/region"
+def get_locations(area: PlugShareArea) -> List[Optional[dict]] | None:
     params = {
-        "spanLat": span_lat,
-        "spanLng": span_lng,
-        "latitude": latitude,
-        "longitude": longitude,
+        "spanLat": area.span_lat,
+        "spanLng": area.span_lng,
+        "latitude": area.latitude,
+        "longitude": area.longitude,
         "count": 1000,
     }
-    # TODO handle None
-    return make_request(url=f"{base_url}/{suffix_url}", params=params, headers=headers).json()
+
+    response = make_request(
+        url=settings.PLUGSHARE_LOCATIONS_URL,
+        params=params,
+        headers=headers
+    )
+    if response is None:
+        return
+    return response.json()
 
 
-def get_location_by_id(location_id: int) -> List[Optional[dict]] | None:
-    suffix_url = f"locations/{location_id}"
-    # params = {}
-    # TODO handle None
-    return make_request(url=f"{base_url}/{suffix_url}", headers=headers).json()
+def get_comments(location_id: int) -> List[Optional[dict]] | None:
+    response = make_request(
+        url=settings.PLUGSHARE_COMMENT_URL.format(location_id=location_id),
+        headers=headers
+    )
+    if response is None:
+        return
+    return response.json()
 
 
-def save_json_file(filename: str, json_data: dict | List[dict]) -> None:
+def save_json_file(filename: str, json_data: List[dict]) -> None:
     with open(filename, "w", encoding="utf-8") as file:
         json.dump(json_data, file, ensure_ascii=False, indent=2)
 
 
 if __name__ == "__main__":
-    locations = rec_get_locations_by_region(2, 2, 37.5, -119.5)
-    save_json_file("other.json", locations)
-    print(len(locations))
+    search_area = PlugShareArea(span_lat=1, span_lng=1, latitude=37.5, longitude=-119.5)
+    locations = parse_area(area=search_area, api_cap=250, get_locations_func=get_locations)
+    comments = []
+    for location in locations:
+        comments.append(get_comments(location["id"]))
+    print(comments)
+
+
