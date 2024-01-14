@@ -1,12 +1,9 @@
 import json
 import httpx
+from settings import Settings
 
 
-# TODO: move on settings
-STATION_LIST_LINK_BASE = 'https://mc.chargepoint.com/map-prod/v2'
-STATION_INFO_LINK_BASE = 'https://mc.chargepoint.com/map-prod/v3/station/info'
-COMMENTS_LINK_BASE = 'https://account.chargepoint.com/account/v1/driver/tip/'
-
+settings = Settings()
 params_for_station_list_request = {
     'station_list': {
         # 'screen_width': 857.5999755859375,
@@ -54,7 +51,7 @@ def _make_request(url: str, **kwargs) -> httpx.Response | None:
 def get_stations_list(params: dict | None = None) -> list | None:
     if params is None:
         params = params_for_station_list_request
-    url = f'{STATION_LIST_LINK_BASE}?{json.dumps(params)}'
+    url = f'{settings.CHARGEPOINT_STATION_LIST_LINK_BASE}?{json.dumps(params)}'
     response = _make_request(url=url)
     if response:
         try:
@@ -119,7 +116,7 @@ def get_all_stations_list(
 
 # TODO: see get_stations_list
 def get_station_details(station_id: int) -> dict | None:
-    response = _make_request(url=STATION_INFO_LINK_BASE, params={'deviceId': station_id})
+    response = _make_request(url=settings.CHARGEPOINT_STATION_INFO_LINK_BASE, params={'deviceId': station_id})
     if response:
         try:
             res = response.json()
@@ -134,7 +131,7 @@ def get_station_details(station_id: int) -> dict | None:
 
 
 def get_station_comments(station_id: int) -> dict | None:
-    url = f'{COMMENTS_LINK_BASE}{station_id}'
+    url = f'{settings.CHARGEPOINT_COMMENTS_LINK_BASE}{station_id}'
     response = _make_request(url=url)
     if response:
         try:
@@ -163,5 +160,5 @@ def main():
             json.dump(stations_info, file)
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
