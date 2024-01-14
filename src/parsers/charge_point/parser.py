@@ -1,50 +1,19 @@
 import json
-import httpx
 from settings import Settings
+from utils.make_request import make_request
 
 
 settings = Settings()
 params_for_station_list_request = {
     'station_list': {
-        # 'screen_width': 857.5999755859375,
-        # 'screen_height': 536,
         'ne_lat': 45.0,
         'ne_lon': 20.0,
         'sw_lat': 44.0,
         'sw_lon': 21.0,
         'page_size': 50,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
-        # TODO: remove all extra params
-        'page_offset': '',
         'sort_by': 'distance',
-        # 'reference_lat': 30,
-        # 'reference_lon': 80,
-        'include_map_bound': True,
-        'filter': {
-            'price_free': False,
-            'status_available': False,
-            'dc_fast_charging': False,
-            'network_chargepoint': False,
-            'connector_l1': False,
-            'connector_l2': False,
-            'connector_l2_nema_1450': False,
-            'connector_l2_tesla': False,
-            'connector_chademo': False,
-            'connector_combo': False,
-            'connector_tesla': False,
-        },
-        'bound_output': True,
     }
 }
-
-
-# TODO: move to make_request from utils
-def _make_request(url: str, **kwargs) -> httpx.Response | None:
-    try:
-        response = httpx.get(url, **kwargs)
-        response.raise_for_status()
-        return response
-    except httpx.HTTPError as exc:
-        print(f'Error while requesting {exc.request.url!r}: {exc}')
 
 
 # get_stations_list from area (lan, lnt)
@@ -52,7 +21,7 @@ def get_stations_list(params: dict | None = None) -> list | None:
     if params is None:
         params = params_for_station_list_request
     url = f'{settings.CHARGEPOINT_STATION_LIST_LINK_BASE}?{json.dumps(params)}'
-    response = _make_request(url=url)
+    response = make_request(url=url)
     if response:
         try:
             # if not 'station_list' in response.json():
@@ -116,7 +85,7 @@ def get_all_stations_list(
 
 # TODO: see get_stations_list
 def get_station_details(station_id: int) -> dict | None:
-    response = _make_request(url=settings.CHARGEPOINT_STATION_INFO_LINK_BASE, params={'deviceId': station_id})
+    response = make_request(url=settings.CHARGEPOINT_STATION_INFO_LINK_BASE, params={'deviceId': station_id})
     if response:
         try:
             res = response.json()
@@ -132,7 +101,7 @@ def get_station_details(station_id: int) -> dict | None:
 
 def get_station_comments(station_id: int) -> dict | None:
     url = f'{settings.CHARGEPOINT_COMMENTS_LINK_BASE}{station_id}'
-    response = _make_request(url=url)
+    response = make_request(url=url)
     if response:
         try:
             return response.json()
@@ -160,5 +129,5 @@ def main():
             json.dump(stations_info, file)
 
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
