@@ -1,7 +1,5 @@
 import httpx
-from utils.logger import create_logger
-
-logger = create_logger()
+from utils.logger import logger
 
 
 def make_request(

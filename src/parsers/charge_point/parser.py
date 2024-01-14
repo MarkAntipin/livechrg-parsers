@@ -1,11 +1,9 @@
 import json
 from settings import Settings
-from utils.logger import create_logger
+from utils.logger import logger
 from utils.make_request import make_request
 
 settings = Settings()
-# TODO Why are there 2 handlers in logger?
-logger = create_logger()
 
 
 def get_stations_list(
