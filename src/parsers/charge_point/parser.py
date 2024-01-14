@@ -2,45 +2,47 @@ import json
 from settings import Settings
 from utils.make_request import make_request
 
-
 settings = Settings()
-params_for_station_list_request = {
-    'station_list': {
-        'ne_lat': 45.0,
-        'ne_lon': 20.0,
-        'sw_lat': 44.0,
-        'sw_lon': 21.0,
-        'page_size': 50,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
-        'sort_by': 'distance',
+
+
+def get_stations_list(
+        *,
+        ne_lat: float = 45.0,
+        ne_lon: float = 20.0,
+        sw_lat: float = 44.0,
+        sw_lon: float = 21.0,
+        stations_num: int = 50
+) -> list:
+    params = {
+        'station_list': {
+            'ne_lat': ne_lat,
+            'ne_lon': ne_lon,
+            'sw_lat': sw_lat,
+            'sw_lon': sw_lon,
+            'page_size': stations_num,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
+            'sort_by': 'distance',
+        }
     }
-}
-
-
-# get_stations_list from area (lan, lnt)
-def get_stations_list(params: dict | None = None) -> list | None:
-    if params is None:
-        params = params_for_station_list_request
     url = f'{settings.CHARGEPOINT_STATION_LIST_LINK_BASE}?{json.dumps(params)}'
     response = make_request(url=url)
-    if response:
-        try:
-            # if not 'station_list' in response.json():
-            #     return
 
-            res = response.json()['station_list']
-            if res.get('stations'):
-                return res['stations']
+    if response:
+        if 'station_list' in (json_response := response.json()):
+            # отдельная проверка на наличие ключа 'error' позволяет получить более полную и точную информацию о
+            # возникающих ошибках
+            if 'error' in (stations_dict := json_response['station_list']):
+                error = stations_dict['error']
+                print(f'Error while receiving station list from {url}: {error}')
+                return []
+            # отдельная проверка на наличие ключа 'stations' нужна, чтобы отлавливать территории
+            # без станций (либо из-за проблем на сайте станции могут перестать отображаться на территории)
+            if 'stations' in stations_dict:
+                return stations_dict['stations']
             # TODO: add logger print -> logger
             print(f'There are not any stations in this area: {url}')
-            return
-        # TODO: json.decoder.JSONDecodeError - нужно ли?
-        # TODO: handle KeyError in 'if'
-        except (KeyError, json.decoder.JSONDecodeError):
-            # TODO: add logger print -> logger
-            print(f'Stations_list has not been received from {url}')
-            return
-    # TODO: add logger print -> logger
+            return []
     print(f'Stations_list has not been received from {url} because of error while requesting')
+    return []
 
 
 # get_all_stations_list from area
