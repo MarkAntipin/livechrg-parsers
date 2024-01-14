@@ -1,8 +1,11 @@
 import json
 from settings import Settings
+from utils.logger import create_logger
 from utils.make_request import make_request
 
 settings = Settings()
+# TODO Why are there 2 handlers in logger?
+logger = create_logger()
 
 
 def get_stations_list(
@@ -32,16 +35,14 @@ def get_stations_list(
             # возникающих ошибках
             if 'error' in (stations_dict := json_response['station_list']):
                 error = stations_dict['error']
-                print(f'Error while receiving station list from {url}: {error}')
+                logger.error('Error while receiving station list from %s: %s', url, error)
                 return []
             # отдельная проверка на наличие ключа 'stations' нужна, чтобы отлавливать территории
             # без станций (либо из-за проблем на сайте станции могут перестать отображаться на территории)
             if 'stations' in stations_dict:
                 return stations_dict['stations']
-            # TODO: add logger print -> logger
-            print(f'There are not any stations in this area: {url}')
+            logger.info('There are not any stations in this area: %s', url)
             return []
-    print(f'Stations_list has not been received from {url} because of error while requesting')
     return []
 
 
@@ -92,13 +93,13 @@ def get_station_details(station_id: int) -> dict | None:
         try:
             res = response.json()
             if res.get('error', None):
-                print(f'Error in request for info about station № {station_id}: {response.url}')
+                logger.error('Error in request for info about station № %s: %s', station_id, response.url)
                 return
             return res
         except json.decoder.JSONDecodeError:
-            print(f'Info about station № {station_id} has not been received from {response.url}')
+            logger.error('Info about station № %s has not been received from %s', station_id, response.url)
             return
-    print(f'Info about station № {station_id} has not been received because of error while requesting')
+    logger.error('Info about station № %s has not been received because of error while requesting', station_id)
 
 
 def get_station_comments(station_id: int) -> dict | None:
@@ -108,9 +109,9 @@ def get_station_comments(station_id: int) -> dict | None:
         try:
             return response.json()
         except json.decoder.JSONDecodeError:
-            print(f'Comments about station № {station_id} has not been received from {response.url}')
+            logger.error('Comments about station № %s has not been received from %s', station_id, response.url)
             return
-    print(f'Comments about station № {station_id} has not been received because of error while requesting')
+    logger.error('Comments about station № %s has not been received because of error while requesting', station_id)
 
 
 def main():
