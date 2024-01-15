@@ -1,14 +1,17 @@
-import httpx
-from utils.logger import create_logger
+import logging
 
-logger = create_logger()
+import httpx
+from utils.setup_logger import setup_logger
+
+logger = logging.getLogger(__name__)
+setup_logger(logger)
 
 
 def make_request(
-    *,
-    url: str,
-    headers: dict | None = None,
-    params: dict | None = None,
+        *,
+        url: str,
+        headers: dict | None = None,
+        params: dict | None = None,
 ) -> httpx.Response | None:
     response = httpx.get(
         url,
@@ -21,7 +24,7 @@ def make_request(
         return response
     except httpx.HTTPStatusError as exc:
         logger.error(
-            "Status code %s: %$ while requesting $s",
+            "Status code %s: %s while requesting %s",
             exc.response.status_code,
             exc.response.text,
             exc.request.url
