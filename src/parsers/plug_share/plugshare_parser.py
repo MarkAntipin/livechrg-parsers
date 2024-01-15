@@ -1,16 +1,15 @@
+import logging
 import json
 from typing import List, Optional
 
 from settings import Settings
 from utils.area import PlugShareArea
-from utils.logger import create_logger
+from utils.setup_logger import setup_logger
 from utils.make_request import make_request
 from utils.parse_area import parse_area
 
-# import logging
-
-# logger = logging.getLogger(__name__)
-logger = create_logger()
+logger = logging.getLogger(__name__)
+setup_logger(logger)
 
 headers = {
     "Authorization": "Basic d2ViX3YyOkVOanNuUE54NHhXeHVkODU=",
@@ -62,5 +61,3 @@ if __name__ == "__main__":
     for location in locations:
         comments.append(get_comments(location["id"]))
     print(comments)
-
-
