@@ -1,28 +1,27 @@
 import json
 import logging
 from settings import Settings
+from utils.area import ChargePointArea
 from utils.setup_logger import setup_logger
 from utils.make_request import make_request
 
 settings = Settings()
 logger = logging.getLogger(__name__)
 setup_logger(logger)
+logger.setLevel(level=logging.INFO)
 
 
 def get_stations_list(
         *,
-        ne_lat: float = 45.0,
-        ne_lon: float = 20.0,
-        sw_lat: float = 44.0,
-        sw_lon: float = 21.0,
+        area: ChargePointArea,
         stations_num: int = 50
 ) -> list:
     params = {
         'station_list': {
-            'ne_lat': ne_lat,
-            'ne_lon': ne_lon,
-            'sw_lat': sw_lat,
-            'sw_lon': sw_lon,
+            'ne_lat': area.ne_lat,
+            'ne_lon': area.ne_lon,
+            'sw_lat': area.sw_lat,
+            'sw_lon': area.sw_lon,
             'page_size': stations_num,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
             'sort_by': 'distance',
         }
