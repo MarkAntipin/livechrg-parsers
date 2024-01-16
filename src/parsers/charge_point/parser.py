@@ -1,9 +1,12 @@
 import json
+import logging
 from settings import Settings
-from utils.logger import logger
+from utils.setup_logger import setup_logger
 from utils.make_request import make_request
 
 settings = Settings()
+logger = logging.getLogger(__name__)
+setup_logger(logger)
 
 
 def get_stations_list(
