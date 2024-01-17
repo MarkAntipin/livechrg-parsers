@@ -47,19 +47,15 @@ def get_stations_list(
     return []
 
 
-# TODO: see get_stations_list
 def get_station_details(station_id: int) -> dict | None:
     response = make_request(url=settings.CHARGEPOINT_STATION_DETAILS_LINK_BASE, params={'deviceId': station_id})
     if response:
-        try:
-            res = response.json()
-            if res.get('error', None):
-                logger.error('Error in request for info about station № %s: %s', station_id, response.url)
-                return
-            return res
-        except json.decoder.JSONDecodeError:
-            logger.error('Info about station № %s has not been received from %s', station_id, response.url)
+        res = response.json()
+        if 'error' in res:
+            error = res['error']
+            logger.error('Error in request for details about station № %s from %s: %s', station_id, response.url, error)
             return
+        return res
     logger.error('Info about station № %s has not been received because of error while requesting', station_id)
 
 
