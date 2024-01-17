@@ -63,11 +63,7 @@ def get_station_comments(station_id: int) -> dict | None:
     url = f'{settings.CHARGEPOINT_COMMENTS_LINK_BASE}{station_id}'
     response = make_request(url=url)
     if response:
-        try:
-            return response.json()
-        except json.decoder.JSONDecodeError:
-            logger.error('Comments about station № %s has not been received from %s', station_id, response.url)
-            return
+        return response.json()
     logger.error('Comments about station № %s has not been received because of error while requesting', station_id)
 
 
