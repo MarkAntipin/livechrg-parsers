@@ -16,18 +16,18 @@ class PlugShareArea(Area, BaseModel):
     latitude: float
     longitude: float
 
-    def split(self, n: int = 2) -> List["PlugShareArea"]:
+    def split(self, divisor: int = 2) -> List["PlugShareArea"]:
 
-        sub_area_width = self.span_lng / n
-        sub_area_height = self.span_lat / n
+        sub_area_width = self.span_lng / divisor
+        sub_area_height = self.span_lat / divisor
 
         sub_areas = []
 
-        for i in range(n):
-            for j in range(n):
+        for i in range(divisor):
+            for j in range(divisor):
                 sub_area = PlugShareArea(
-                    longitude=self.longitude + ((i - (n - 1) / 2) * sub_area_width),
-                    latitude=self.latitude + ((j - (n - 1) / 2) * sub_area_height),
+                    longitude=self.longitude + ((i - (divisor - 1) / 2) * sub_area_width),
+                    latitude=self.latitude + ((j - (divisor - 1) / 2) * sub_area_height),
                     span_lat=sub_area_height,
                     span_lng=sub_area_width
                 )
