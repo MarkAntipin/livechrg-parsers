@@ -135,8 +135,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# area = ChargePointArea(ne_lat=45.0, ne_lon=20.0, sw_lat=44.0, sw_lon=21.0,)
-# print(area.split())
-# area = ChargePointArea(ne_lat=90.0, ne_lon=0.0, sw_lat=89.0, sw_lon=1.0,)
-# print(parse_area(area=area, api_cap=50, get_locations_func=get_stations_list))

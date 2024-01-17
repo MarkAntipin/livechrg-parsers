@@ -41,16 +41,15 @@ class ChargePointArea(Area, BaseModel):
     sw_lat: float
     sw_lon: float
 
-    def split(self, sub_areas_num: int = 4) -> list['ChargePointArea']:
+    def split(self, divisor: int = 2) -> list['ChargePointArea']:
         lat_span = self.ne_lat - self.sw_lat
         lon_span = self.sw_lon - self.ne_lon
-        divider = int(sub_areas_num ** 0.5)
-        sub_area_width = lon_span / divider
-        sub_area_height = lat_span / divider
+        sub_area_width = lon_span / divisor
+        sub_area_height = lat_span / divisor
         sub_areas = []
 
-        for i in range(divider):
-            for j in range(divider):
+        for i in range(divisor):
+            for j in range(divisor):
                 sub_area = ChargePointArea(
                     ne_lat = self.ne_lat - (i * sub_area_height),
                     ne_lon = self.ne_lon + (j * sub_area_width),
