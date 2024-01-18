@@ -17,7 +17,7 @@ def get_stations_list(
         area: ChargePointArea,
         stations_num: int = 50
 ) -> list:
-    params = {
+    json = {
         'station_list': {
             'ne_lat': area.ne_lat,
             'ne_lon': area.ne_lon,
@@ -26,7 +26,7 @@ def get_stations_list(
             'page_size': stations_num,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
         }
     }
-    response = make_post_request(url=settings.CHARGEPOINT_STATION_LIST_LINK_BASE, json=params)
+    response = make_post_request(url=settings.CHARGEPOINT_STATION_LIST_LINK_BASE, json=json)
 
     if response:
         if 'station_list' in (json_response := response.json()):
@@ -84,11 +84,5 @@ def main():
             json.dump(stations_info, file)
 
 
-# if __name__ == '__main__':
-#     main()
-
-# area = ChargePointArea(ne_lat=45.0, ne_lon=22.0, sw_lat=44.0, sw_lon=23.0)
-# area = ChargePointArea(ne_lat=90.0, ne_lon=0.0, sw_lat=89.0, sw_lon=1.0)
-# print(len(get_stations_list(area=area)))
-# print(parse_area(area=area, api_cap=50, get_locations_func=get_stations_list))
-# print(get_stations_list(area=area))
+if __name__ == '__main__':
+    main()
