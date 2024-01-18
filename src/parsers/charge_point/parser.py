@@ -4,7 +4,8 @@ from settings import Settings
 from utils.area import ChargePointArea
 from utils.parse_area import parse_area
 from utils.setup_logger import setup_logger
-from utils.make_request import make_get_request, make_post_request
+from utils.make_get_request import make_get_request
+from utils.make_post_request import make_post_request
 
 settings = Settings()
 logger = logging.getLogger(__name__)

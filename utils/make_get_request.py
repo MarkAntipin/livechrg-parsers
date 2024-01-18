@@ -29,29 +29,3 @@ def make_get_request(
             exc.response.text,
             exc.request.url
         )
-
-
-def make_post_request(
-        *,
-        url: str,
-        headers: dict | None = None,
-        params: dict | None = None,
-        json: dict | None = None,
-) -> httpx.Response | None:
-    response = httpx.post(
-        url,
-        headers=headers,
-        params=params,
-        json = json
-    )
-
-    try:
-        response.raise_for_status()
-        return response
-    except httpx.HTTPStatusError as exc:
-        logger.error(
-            "Status code %s: %s while requesting %s",
-            exc.response.status_code,
-            exc.response.text,
-            exc.request.url
-        )
