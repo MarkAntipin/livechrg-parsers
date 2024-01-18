@@ -1,5 +1,6 @@
 import json
 import logging
+import httpx
 from settings import Settings
 from utils.area import ChargePointArea
 from utils.parse_area import parse_area
@@ -18,7 +19,7 @@ def get_stations_list(
         area: ChargePointArea,
         stations_num: int = 50
 ) -> list:
-    json = {
+    json_arg = {
         'station_list': {
             'ne_lat': area.ne_lat,
             'ne_lon': area.ne_lon,
@@ -27,7 +28,8 @@ def get_stations_list(
             'page_size': stations_num,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
         }
     }
-    response = make_post_request(url=settings.CHARGEPOINT_STATION_LIST_LINK_BASE, json=json)
+    timeout = httpx.Timeout(10, read=60)
+    response = make_post_request(url=settings.CHARGEPOINT_STATION_LIST_LINK_BASE, json_arg=json_arg, timeout=timeout)
 
     if response:
         if 'station_list' in (json_response := response.json()):
@@ -43,6 +45,7 @@ def get_stations_list(
                 return stations_dict['stations']
             logger.info('There are not any stations in this area: %s', area)
             return []
+
     return []
 
 

@@ -12,18 +12,18 @@ setup_logger(logger)
 def make_post_request(
         *,
         url: str,
-        headers: dict | None = None,
+        json_arg: dict | None = None,
         params: dict | None = None,
-        json: dict | None = None,
+        timeout: httpx.Timeout | None = None,
+        headers: dict | None = None,
 ) -> httpx.Response | None:
-    timeout = httpx.Timeout(10, read=60)
     client = httpx.Client(timeout=timeout)
 
     response = client.post(
         url,
         headers=headers,
         params=params,
-        json = json
+        json = json_arg,
     )
 
     try:
