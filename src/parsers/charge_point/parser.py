@@ -24,7 +24,6 @@ def get_stations_list(
             'sw_lat': area.sw_lat,
             'sw_lon': area.sw_lon,
             'page_size': stations_num,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
-            'sort_by': 'distance',
         }
     }
     url = f'{settings.CHARGEPOINT_STATION_LIST_LINK_BASE}?{json.dumps(params)}'
