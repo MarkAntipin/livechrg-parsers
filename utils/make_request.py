@@ -12,9 +12,19 @@ def make_request(
         url: str,
         headers: dict | None = None,
         params: dict | None = None,
+        method: str = 'get'
 ) -> httpx.Response | None:
-    response = httpx.get(
-        url,
+    methods: dict = {
+        'get': httpx.get,
+        'post': httpx.post,
+        'put': httpx.put,
+        'delete': httpx.delete,
+        'head': httpx.head,
+        'options': httpx.options,
+    }
+
+    response = methods[method](
+        url=url,
         headers=headers,
         params=params
     )
