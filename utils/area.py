@@ -36,14 +36,14 @@ class PlugShareArea(Area, BaseModel):
 
 
 class ChargePointArea(Area, BaseModel):
-    ne_lat: float
-    ne_lon: float
-    sw_lat: float
     sw_lon: float
+    sw_lat: float
+    ne_lon: float
+    ne_lat: float
 
     def split(self, divisor: int = 2) -> list['ChargePointArea']:
+        lon_span = self.ne_lon - self.sw_lon
         lat_span = self.ne_lat - self.sw_lat
-        lon_span = self.sw_lon - self.ne_lon
         sub_area_width = lon_span / divisor
         sub_area_height = lat_span / divisor
         sub_areas = []
@@ -51,10 +51,10 @@ class ChargePointArea(Area, BaseModel):
         for i in range(divisor):
             for j in range(divisor):
                 sub_area = ChargePointArea(
-                    ne_lat = self.ne_lat - (i * sub_area_height),
-                    ne_lon = self.ne_lon + (j * sub_area_width),
-                    sw_lat = self.ne_lat - ((i + 1) * sub_area_height),
-                    sw_lon = self.ne_lon + ((j + 1) * sub_area_width)
+                    sw_lon = self.sw_lon + (j * sub_area_width),
+                    sw_lat = self.sw_lat + (i * sub_area_height),
+                    ne_lon = self.sw_lon + ((j + 1) * sub_area_width),
+                    ne_lat = self.sw_lat + ((i + 1) * sub_area_height),
                 )
                 sub_areas.append(sub_area)
 

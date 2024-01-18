@@ -71,7 +71,7 @@ def get_station_comments(station_id: int) -> dict | None:
 
 def main():
     stations_info: dict = {}
-    area = ChargePointArea(ne_lat=45.0, ne_lon=22.0, sw_lat=44.0, sw_lon=23.0)
+    area = ChargePointArea(sw_lon=22.0, sw_lat=44.0, ne_lon=23.0, ne_lat=45.0)
     stations_list = parse_area(area=area, api_cap=50, get_locations_func=get_stations_list)
     if stations_list:
         for station in stations_list:
