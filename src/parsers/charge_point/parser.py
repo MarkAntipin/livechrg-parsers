@@ -4,7 +4,7 @@ from settings import Settings
 from utils.area import ChargePointArea
 from utils.parse_area import parse_area
 from utils.setup_logger import setup_logger
-from utils.make_request import make_request
+from utils.make_request import make_get_request, make_post_request
 
 settings = Settings()
 logger = logging.getLogger(__name__)
@@ -26,8 +26,7 @@ def get_stations_list(
             'page_size': stations_num,  # почему-то иногда результат оказывается в 2 или 3 раза больше заданного
         }
     }
-    url = f'{settings.CHARGEPOINT_STATION_LIST_LINK_BASE}?{json.dumps(params)}'
-    response = make_request(url=url)
+    response = make_post_request(url=settings.CHARGEPOINT_STATION_LIST_LINK_BASE, json=params)
 
     if response:
         if 'station_list' in (json_response := response.json()):
@@ -35,19 +34,19 @@ def get_stations_list(
             # возникающих ошибках
             if 'error' in (stations_dict := json_response['station_list']):
                 error = stations_dict['error']
-                logger.error('Error while receiving station list from %s: %s', url, error)
+                logger.error('Error while receiving station list for area %s: %s', area, error)
                 return []
             # отдельная проверка на наличие ключа 'stations' нужна, чтобы отлавливать территории
             # без станций (либо из-за проблем на сайте станции могут перестать отображаться на территории)
             if 'stations' in stations_dict:
                 return stations_dict['stations']
-            logger.info('There are not any stations in this area: %s', url)
+            logger.info('There are not any stations in this area: %s', area)
             return []
     return []
 
 
 def get_station_details(station_id: int) -> dict | None:
-    response = make_request(url=settings.CHARGEPOINT_STATION_DETAILS_LINK_BASE, params={'deviceId': station_id})
+    response = make_get_request(url=settings.CHARGEPOINT_STATION_DETAILS_LINK_BASE, params={'deviceId': station_id})
     if response:
         res = response.json()
         if 'error' in res:
@@ -60,7 +59,7 @@ def get_station_details(station_id: int) -> dict | None:
 
 def get_station_comments(station_id: int) -> dict | None:
     url = f'{settings.CHARGEPOINT_COMMENTS_LINK_BASE}{station_id}'
-    response = make_request(url=url)
+    response = make_get_request(url=url)
     if response:
         return response.json()
     logger.error('Comments about station № %s has not been received because of error while requesting', station_id)
@@ -85,5 +84,11 @@ def main():
             json.dump(stations_info, file)
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
+
+# area = ChargePointArea(ne_lat=45.0, ne_lon=22.0, sw_lat=44.0, sw_lon=23.0)
+# area = ChargePointArea(ne_lat=90.0, ne_lon=0.0, sw_lat=89.0, sw_lon=1.0)
+# print(len(get_stations_list(area=area)))
+# print(parse_area(area=area, api_cap=50, get_locations_func=get_stations_list))
+# print(get_stations_list(area=area))
