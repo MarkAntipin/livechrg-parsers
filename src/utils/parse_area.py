@@ -1,6 +1,6 @@
 import typing
 
-from utils.area import Area
+from src.utils.area import Area
 
 
 def parse_area(*, area: Area, api_cap: int, get_locations_func: typing.Callable) -> list:
@@ -17,4 +17,3 @@ def parse_area(*, area: Area, api_cap: int, get_locations_func: typing.Callable)
             stack.extend(areas)
 
     return all_locations
-
