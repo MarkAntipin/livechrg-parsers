@@ -8,3 +8,4 @@ def setup_logger(logger: logging.Logger) -> None:
     console_handler.setFormatter(formatter)
 
     logger.addHandler(console_handler)
+    logger.setLevel(logging.INFO)

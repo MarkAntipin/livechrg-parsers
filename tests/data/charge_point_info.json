@@ -1,0 +1,240 @@
+{
+    "hostName": "MASSDOT EV",
+    "addTipOption": "MULTIPLE_STATIONS",
+    "portDisplayType": "SIDE_BY_SIDE",
+    "openCloseStatus": "open",
+    "notifymeBy":
+    {
+        "status": "UNAUTHORIZED_NOT_AVAILABLE"
+    },
+    "instance": "NA-US",
+    "showReportProblem": true,
+    "latitude": 42.330765,
+    "addPhotoOption": "MULTIPLE_STATIONS",
+    "description": "Car parking area, first right after ramp.",
+    "deviceId": 13784811,
+    "network":
+    {
+        "inNetwork": true,
+        "displayName": "ChargePoint Network",
+        "name": "ChargePoint Network",
+        "logoUrl": "https://mc.chargepoint.com/images/network/2/ic_network_chargepoint.png"
+    },
+    "reducedPower": false,
+    "baseEvatarImagesUrl": "https://mc.chargepoint.com/images/evatar",
+    "displayLevel": "DC Fast",
+    "stationStatus": "available",
+    "lastChargedVehicles":
+    [
+        {
+            "chargedTime": 1706526996906,
+            "name": "Unknown Car"
+        },
+        {
+            "chargedTime": 1706520909119,
+            "name": "Polestar 2"
+        },
+        {
+            "chargedTime": 1706483971153,
+            "name": "Hyundai Kona EV"
+        },
+        {
+            "chargedTime": 1706482575473,
+            "name": "Polestar 2"
+        },
+        {
+            "chargedTime": 1706474793485,
+            "name": "Unknown Car"
+        }
+    ],
+    "alertUserToPlugin": true,
+    "stopChargeSupported": true,
+    "longitude": -71.254776,
+    "parkingAccessibility": "None",
+    "portsInfo":
+    {
+        "portCount": 1,
+        "ports":
+        [
+            {
+                "powerRange":
+                {
+                    "unit": "kW",
+                    "max": "62.5"
+                },
+                "parkingAccessibility": "None",
+                "level": "DC",
+                "displayLevel": "DC Fast",
+                "distanceRange":
+                {
+                    "unit": "Mile",
+                    "max": 187.5
+                },
+                "connectorList":
+                [
+                    {
+                        "plugSequenceNum": 1,
+                        "plugType": "PLUG",
+                        "displayPlugType": "Combo",
+                        "status": "available"
+                    },
+                    {
+                        "plugSequenceNum": 2,
+                        "plugType": "PLUG",
+                        "displayPlugType": "CHAdeMO",
+                        "status": "available"
+                    }
+                ],
+                "outletNumber": 1,
+                "status": "available"
+            }
+        ],
+        "dc": true
+    },
+    "address":
+    {
+        "city": "Newton",
+        "address1": "6 MA-128",
+        "state": "Massachusetts"
+    },
+    "startChargeOptions":
+    [],
+    "timeZone": "GMT-5:00",
+    "randomizedDelayLimit":
+    {
+        "unit": "s",
+        "value": 0
+    },
+    "startChargeConfig":
+    [
+        {
+            "type": "CPV1"
+        },
+        {
+            "type": "TAPTOCHARGE"
+        },
+        {
+            "type": "ANONYMOUSCHARGE"
+        }
+    ],
+    "accessRestriction": "NONE",
+    "stationPrice":
+    {
+        "guestFee":
+        {
+            "amount": 0.99,
+            "unit": "SESSION"
+        },
+        "energyFee":
+        {
+            "fixedFee":
+            {
+                "amount": 0.35,
+                "unit": "KWH"
+            }
+        },
+        "estimatedFeeOptions":
+        {
+            "estimatedFeeForDurationList":
+            [
+                {
+                    "duration": 900,
+                    "price": 4.38
+                },
+                {
+                    "duration": 1800,
+                    "price": 8.75
+                },
+                {
+                    "duration": 2700,
+                    "price": 13.12
+                },
+                {
+                    "duration": 3600,
+                    "price": 17.5
+                }
+            ],
+            "defaultIndex": 0,
+            "perKwhEstimate":
+            {
+                "defaultIndex": 4,
+                "estimatedFeeForEnergyList":
+                [
+                    {
+                        "price": 3.5,
+                        "energy": 10.0
+                    },
+                    {
+                        "price": 7.0,
+                        "energy": 20.0
+                    },
+                    {
+                        "price": 10.5,
+                        "energy": 30.0
+                    },
+                    {
+                        "price": 14.0,
+                        "energy": 40.0
+                    },
+                    {
+                        "price": 15.4,
+                        "energy": 45.0
+                    },
+                    {
+                        "price": 17.5,
+                        "energy": 50.0
+                    },
+                    {
+                        "price": 21.0,
+                        "energy": 60.0
+                    },
+                    {
+                        "price": 24.5,
+                        "energy": 70.0
+                    },
+                    {
+                        "price": 28.0,
+                        "energy": 80.0
+                    },
+                    {
+                        "price": 31.5,
+                        "energy": 90.0
+                    },
+                    {
+                        "price": 35.0,
+                        "energy": 100.0
+                    },
+                    {
+                        "price": 38.5,
+                        "energy": 110.0
+                    },
+                    {
+                        "price": 42.0,
+                        "energy": 120.0
+                    }
+                ]
+            }
+        },
+        "currencyCode": "USD",
+        "minFee":
+        {
+            "amount": 2.0
+        }
+    },
+    "currentTime": 1706540044350,
+    "popularTimes":
+    {},
+    "name":
+    [
+        "MASSDOT",
+        "NEWTON S-PLAZ 1"
+    ],
+    "modelNumber": "CPE250-HEAD-F",
+    "sharedPower": false,
+    "maxPower":
+    {
+        "unit": "kW",
+        "max": "62.5"
+    },
+    "remoteStartCharge": true
+}
